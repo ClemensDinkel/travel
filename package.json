@@ -1,0 +1,29 @@
+{
+  "name": "travel_wishlist",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "express-validator": "^6.11.1",
+    "nodemon": "^2.0.7"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClemensDinkel/travel.git"
+  },
+  "bugs": {
+    "url": "https://github.com/ClemensDinkel/travel/issues"
+  },
+  "homepage": "https://github.com/ClemensDinkel/travel#readme",
+  "description": ""
+}
