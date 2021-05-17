@@ -1,11 +1,26 @@
-const countries = require('./countries');
+const countries = require('./world');
 const express = require('express');
-/* const bodyParser = require('body-parser'); */
 const app = express();
 const port = 3000;
+const compareAlphabetically = (a, b) => {
+    if (a.name > b.name) return 1;
+    if (b.name > a.name) return -1;
+    return 0;
+};
 app.use(express.json());
 
-/* app.use(bodyParser.urlencoded({ extended: false })); */
+app.delete('/api/countries/:code', (req, res) => {
+    let { code } = req.params;
+    let country = countries.find(country => {
+        return (
+            country.alpha2Code.toLowerCase() === code.toLowerCase().trim() ||
+            country.alpha3Code.toLowerCase() === code.toLowerCase().trim()
+        )
+    });
+    const index = countries.indexOf(country);
+    countries.splice(index, 1);
+    res.send(`<div><img src="/flags/${country.alpha2Code.toLowerCase()}.png"/><p>Country with the code "${code}" has been deleted successfully</p></div>`)
+});
 
 app.get("/", (req, res) => {
     res.send('Hello, welcome to our fascinating API')
@@ -15,26 +30,24 @@ app.get('/api/countries', (req, res) => {
     if (req.query.sort) {
         const sortedCountries = [...countries].sort(compareAlphabetically);
         res.json(sortedCountries);
-        } else {
+    } else {
         res.json(countries)
-        };
+    };
+});
+
+app.get('/api/countries/:code', (req, res) => {
+    console.log(`code is ${req.params.code}`);
+    //console.log(countries)
+    let country = countries.find(country => {
+        return (
+            country.alpha2Code.toLowerCase() === req.params.code.toLowerCase().trim() ||
+            country.alpha3Code.toLowerCase() === req.params.code.toLowerCase().trim()
+        )
     });
-
-/* res.send(countries.sort((n1, n2) => n1.name - n2.name)) */
-
-/* app.get('/api/countries/add-country', (req, res) => {
-    res.send(`
-    <form action="/api/countries/add-country" method="POST">
-        Name:
-        <input name="name" type="text"/>
-        Alpha 2 Code:
-        <input name="alpha2Code" type="text"/>
-        Alpha 3 Code:
-        <input name="alpha3Code" type="text"/>
-        <button type="submit">submit</button>
-    </form>
-    `);
-}); */
+    console.log(country);
+    if (!country) res.status(404).send("Error 404. Country not found")
+    res.send(country)
+});
 
 app.post('/api/countries/add-country', (req, res) => {
 
@@ -65,19 +78,30 @@ app.post('/api/countries', (req, res) => {
     }
     countries.push(newCountry);
     res.send(countries)
-})
-
-
-app.delete('/api/countries/:id', (req, res) => {
-    res.send('Got a DELETE request at /user'); // refactor later
 });
+
+app.put("/api/countries/:code", (req, res) => {
+    let { code } = req.params;
+    let country = countries.find(country => {
+        return (
+            country.alpha2Code.toLowerCase() === code.toLowerCase().trim() ||
+            country.alpha3Code.toLowerCase() === code.toLowerCase().trim()
+        )
+    });
+    if (country) {
+        country.name = req.body.name;
+        country.alpha2Code = req.body.alpha2Code;
+        country.alpha3Code = req.body.alpha3Code;
+    }
+    else {
+        res.status(404).send(`<h1>The country does not exist!</h1>`);
+    }
+
+    res.send(country)
+});
+
+//listen to
 
 app.listen(port, () => {
     console.log(`server running on port ${port}`)
 })
-
-const compareAlphabetically = (a, b) => {
-    if (a.name > b.name) return 1;
-    if (b.name > a.name) return -1;
-    return 0;
-};
